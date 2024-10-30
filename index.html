@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Messaging Provider Test</title>
+    <script>
+        // Function to test Pub/Sub Connectivity
+        function testPubSub() {
+            fetch('/test_pubsub')
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Pub/Sub Test: ${data.status} - Message ID: ${data.message_id}`);
+                })
+                .catch(error => alert(`Error: ${error}`));
+        }
+
+        // Function to insert message into database
+        function testDatabase() {
+            fetch('/test_database')
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Database Test: ${data.status} - Message: ${data.message}`);
+                })
+                .catch(error => alert(`Error: ${error}`));
+        }
+
+        // Function to get messages from database
+        function getMessages() {
+            fetch('/get_messages')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        let messages = data.messages;
+                        let messageTable = document.getElementById("messageTable");
+                        messageTable.innerHTML = ""; // Clear the table
+                        messages.forEach(msg => {
+                            let row = `<tr>
+                                <td>${msg[0]}</td>
+                                <td>${msg[1]}</td>
+                                <td>${msg[2]}</td>
+                                <td>${msg[3]}</td>
+                            </tr>`;
+                            messageTable.innerHTML += row;
+                        });
+                    } else {
+                        alert("Error fetching messages: " + data.error);
+                    }
+                })
+                .catch(error => alert(`Error: ${error}`));
+        }
+    </script>
+</head>
+<body>
+    <h1>Cloud Messaging Provider Testing UI</h1>
+
+    <button onclick="testPubSub()">Test Pub/Sub Connectivity</button>
+    <br><br>
+    <button onclick="testDatabase()">Test Database Insert</button>
+    <br><br>
+    <button onclick="getMessages()">Get Messages from Database</button>
+
+    <h2>Message Logs:</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Message ID</th>
+                <th>Item ID</th>
+                <th>Location</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="messageTable">
+            <!-- Messages from database will be displayed here -->
+        </tbody>
+    </table>
+</body>
+</html>

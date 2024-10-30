@@ -1,0 +1,14 @@
+{
+    "type": "service_account",
+    "project_id": "pelagic-quanta-437214-m7",
+    "private_key_id": "4e38c6774618330e4400c4bf89007483297fa48c",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCuC97Fdx9C/iGx\nP5ylBruO/Dk4r2jjDp6Aywyh3IdfOTENfoMVLFLwwLSwKCLxJvOKeIH2hwt6BW1h\n4hh4GXIOBVtng4xhSbW1MYFjK5C5ElimkoNv5HXIsw69xkeIdwVkCzMZxnX+41Tn\nZ3VbdwAGCUY7FKXnGe/myZKNUh28h7YSjiW3krng9l1sBorsArirN/JHWjngsfcT\nyXzG2MUuuq3TO4WgknxQBi2CuwPRndDkpOQw9Lze0JlkbiTloy8HBzAxE6C8FVEE\n91SHpwy5NDYg+dftNHVJp83gS+eWXgCeASo9/dZpKTOmTMghjIv/Ud80xA25ayko\nKPitvXjRAgMBAAECgf9tYQXMWIen4xrgiHcbOgeiw+flXQWCMbGl9P/gdqQcrYFl\nD2Crdrse5t3aVyGURcj47s++SROaJL0ahY2BkIZ6ncH484j3bR822vZ2znMpI8Yu\n8wtDXt6C93+XrT4b1bDeP09xOSq4zeVy/cPWdjQl6OkSfT07yHY60Cju+/AdKoK3\n0GQJTjly+VdAJcFg3AoAOzsQZ2cgUahCL2z6PoiUnOaFA/MfbAWuYixrj71W8E9+\nJilaHji2Hf0TJj6dOV5beVqKhT3RVohi23dHoU9I9TG5/pHKN4gkLwOKO6QeQ3wu\nIDetkKzgp/idcS1GTYnEy98f0HBO3AyKE7zgRMkCgYEA7oQKZAW33Q89oaLqpy3q\nSj9GQ+pluCnj5AYx5kmgH0nHjcHi3w3XBpVxB8TsklExM8owFFZ17aqzT5dE+FL7\ndrign/O0w2gD4dj/IbJFU6euxgFfTVC1sWnb30+KjaxPRjRLldilZRZYDzGvjato\ndKUFAT/jUFknni5gDAB2JGkCgYEAus4BCqSEwO8ZAlUChDSl2GMIXG57lJv7gWol\n7gQ+FJACYBXve0WIWcZAwjjYijYUA/rdG7AzsvwK7QgL34eCyrTKRDAsRLAELcZY\n+NCpgriLnvo0Zph5o4UbA6KW+dX4GJkP2BhkE7mTBB7b+3aUN/QtiSsi8d23eXFC\nH2hABCkCgYEA2Bq0m2l+7ICpk7DbsLtuQvVPgat3nEQAIhLm1UMyHAcqEitwli6g\n+2sdbS+kNPHxhX4Uz+iCkuMN8fgZ2nC9PBUOG76gskek9NU6XFp8a85LEUYfBhsx\ndFx4hb04ySIs9WvebBdNy+hRwvp+l/qM+tqlTTuIhr0woyZbiaRFZrkCgYAZEapM\nHlX+elfV20iyK0qSZn/pv53wDJrM/EzIy2L1aXoYIPl5hpRMz/FC31QYADfhbNod\nbCEUBQUGWE0Xm1zvDSIT0o8uTJzS88pe4cnN1CxQkm1T02SHkEZWz4wJTTC1RF0+\n987+YqobJHULIxezBp7RyKsw4DtOHefsxRXKOQKBgEFpbfGq8arbXcrBd+oCbYWO\nFjCroE8wgQAkPuCQLoam6+DsJZVcNQybJdaYY/CglhNL0DQQcK902Id8G3oAfVYV\nJBEe+dg+MsHRYjkjdNCrK6zIuqhO61GyY+hC/8287jCQu/fem7ltJ01tkmmfTm+Q\nJ38dM5wYDvXBW5A+zeDf\n-----END PRIVATE KEY-----\n",
+    "client_email": "pubsub-service-account@pelagic-quanta-437214-m7.iam.gserviceaccount.com",
+    "client_id": "117320244934276089114",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pubsub-service-account%40pelagic-quanta-437214-m7.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
+  
