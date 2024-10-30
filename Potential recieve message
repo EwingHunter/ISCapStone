@@ -1,0 +1,7 @@
+def callback(message: pubsub_v1.subscriber.message.Message) -> None:
+    print(f"Received {message}.")
+    #This function makes the message recieved into a string then to a dictionary for easier transfer to MangoDB
+    message_data = message.data.decode('utf-8')
+    message.ack()
+streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+print(f"Listening for messages on {subscription_path}..\n")
