@@ -3,76 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Messaging Provider Test</title>
-    <script>
-        // Function to test Pub/Sub Connectivity
-        function testPubSub() {
-            fetch('/test_pubsub')
-                .then(response => response.json())
-                .then(data => {
-                    alert(`Pub/Sub Test: ${data.status} - Message ID: ${data.message_id}`);
-                })
-                .catch(error => alert(`Error: ${error}`));
+    <title>Cloud Messaging Provider Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic CSS styling for layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-
-        // Function to insert message into database
-        function testDatabase() {
-            fetch('/test_database')
-                .then(response => response.json())
-                .then(data => {
-                    alert(`Database Test: ${data.status} - Message: ${data.message}`);
-                })
-                .catch(error => alert(`Error: ${error}`));
+        header, footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
         }
-
-        // Function to get messages from database
-        function getMessages() {
-            fetch('/get_messages')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        let messages = data.messages;
-                        let messageTable = document.getElementById("messageTable");
-                        messageTable.innerHTML = ""; // Clear the table
-                        messages.forEach(msg => {
-                            let row = `<tr>
-                                <td>${msg[0]}</td>
-                                <td>${msg[1]}</td>
-                                <td>${msg[2]}</td>
-                                <td>${msg[3]}</td>
-                            </tr>`;
-                            messageTable.innerHTML += row;
-                        });
-                    } else {
-                        alert("Error fetching messages: " + data.error);
-                    }
-                })
-                .catch(error => alert(`Error: ${error}`));
+        .container {
+            display: flex;
+            flex-direction: row;
         }
-    </script>
+        .sidebar {
+            width: 200px;
+            background-color: #444;
+            color: white;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .sidebar a {
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .table, .settings-panel, .status-indicator {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .status-indicator.connected {
+            color: green;
+        }
+        .status-indicator.disconnected {
+            color: red;
+        }
+        .status-indicator.reconnecting {
+            color: orange;
+        }
+        .duplicate {
+            background-color: #ffcccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Cloud Messaging Provider Testing UI</h1>
 
-    <button onclick="testPubSub()">Test Pub/Sub Connectivity</button>
-    <br><br>
-    <button onclick="testDatabase()">Test Database Insert</button>
-    <br><br>
-    <button onclick="getMessages()">Get Messages from Database</button>
+<header>
+    <h1>Cloud Messaging Provider</h1>
+</header>
 
-    <h2>Message Logs:</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Message ID</th>
-                <th>Item ID</th>
-                <th>Location</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody id="messageTable">
-            <!-- Messages from database will be displayed here -->
-        </tbody>
-    </table>
+<div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <a href="#">Home</a>
+        <a href="#">Database</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Connectivity Status -->
+        <div class="status-indicator connected">
+            <strong>Connectivity Status:</strong> Connected
+        </div>
+
+        <!-- Message Management Panel -->
+        <section class="message-management">
+            <h2>Message Table</h2>
+            <table>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Message ID</th>
+                    <th>Item ID</th>
+                    <th>Location</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                </tr>
+                <tr class="unique">
+                    <td>2024-10-29 08:15</td>
+                    <td>12345</td>
+                    <td>Item-001</td>
+                    <td>Location A</td>
+                    <td>10</td>
+                    <td>Unique</td>
+                    <td>Publisher A</td>
+                </tr>
+                <tr class="duplicate">
+                    <td>2024-10-29 08:20</td>
+                    <td>12345</td>
+                    <td>Item-001</td>
+                    <td>Location A</td>
+                    <td>10</td>
+                    <td>Duplicate</td>
+                    <td>Publisher B</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Database Interaction Section -->
+        <section class="database-viewer">
+            <h2>Database Viewer</h2>
+            <button>Export as JSON</button>
+            <button>Export as CSV</button>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Sample data</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- User Settings -->
+        <section class="settings-panel">
+            <h2>User Settings</h2>
+            <div>
+                <strong>Profile Management</strong>
+                <p><a href="#">Change Password</a></p>
+                <p><a href="#">Dark Mode</a></p>
+                <p><a href="#">Notification Settings</a></p>
+            </div>
+            <div>
+                <strong>API Configuration</strong>
+                <form>
+                    <label for="api-endpoint">API Endpoint:</label>
+                    <input type="text" id="api-endpoint" name="api-endpoint">
+                    <label for="api-key">API Key:</label>
+                    <input type="text" id="api-key" name="api-key">
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer>
+    &copy; 2024 Cloud Messaging Provider. All rights reserved.
+</footer>
+
 </body>
 </html>
+
