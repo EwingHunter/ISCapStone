@@ -1,0 +1,19 @@
+def json_to_dict(file_path): #changes json file into a dictionary
+    with open(file_path, 'r') as json_file:
+        data = json.load(json_file)
+    return data
+file_path = (r"C:\Users\17703\Desktop\\Message_1.json")  # Replace with your JSON file path
+dictionary = json_to_dict(file_path) #dictionary is our message we are trying to send
+data = json.dumps(dictionary) #This is what is sent to google pub/sub
+
+file_path = (r"C:\Users\17703\Desktop\\Message_2.json")
+dictionary = json_to_dict(file_path)
+data_2 = json.dumps(dictionary) #message 2 as a dictionary
+
+file_path = (r"C:\Users\17703\Desktop\\Message_3.json")
+dictionary = json_to_dict(file_path)
+data_3 = json.dumps(dictionary) #message 3 as a dictionary
+
+file_path = (r"C:\Users\17703\Desktop\\Message_1.json")
+dictionary = json_to_dict(file_path)
+data_4 = json.dumps(dictionary) #message 1 repeated as a dictionary
