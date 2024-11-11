@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Messaging Provider Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         /* Basic CSS styling for layout */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
         header, footer {
             background-color: #333;
@@ -69,6 +69,20 @@
         .duplicate {
             background-color: #ffcccc;
         }
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #222;
+            color: white;
+        }
+        .sidebar.dark-mode {
+            background-color: #333;
+        }
+        .sidebar.dark-mode a {
+            color: white;
+        }
+        .sidebar.dark-mode a:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -79,18 +93,21 @@
 
 <div class="container">
     <!-- Sidebar Navigation -->
-    <nav class="sidebar">
-        <a href="#">Home</a>
-        <a href="#">Database</a>
-        <a href="#">Settings</a>
-        <a href="#">Logout</a>
+    <nav class="sidebar" id="sidebar">
+        <a href="/">Home</a>
+        <a href="/get_messages">Messages</a>
+        <a href="/export_messages">Export Messages</a>
+        <a href="#" id="dark-mode-toggle">Toggle Dark Mode</a>
+        <a href="/settings">Settings</a>
+        <a href="/logout">Logout</a>
     </nav>
 
     <!-- Main Content -->
     <div class="content">
         <!-- Connectivity Status -->
-        <div class="status-indicator connected">
+        <div id="connectivity-status" class="status-indicator connected">
             <strong>Connectivity Status:</strong> Connected
+            <span id="connection-timestamp"></span>
         </div>
 
         <!-- Message Management Panel -->
@@ -105,33 +122,27 @@
                     <th>Quantity</th>
                     <th>Status</th>
                     <th>Source</th>
+                    <th>Actions</th>
                 </tr>
-                <tr class="unique">
-                    <td>2024-10-29 08:15</td>
-                    <td>12345</td>
-                    <td>Item-001</td>
-                    <td>Location A</td>
-                    <td>10</td>
-                    <td>Unique</td>
-                    <td>Publisher A</td>
-                </tr>
-                <tr class="duplicate">
-                    <td>2024-10-29 08:20</td>
-                    <td>12345</td>
-                    <td>Item-001</td>
-                    <td>Location A</td>
-                    <td>10</td>
-                    <td>Duplicate</td>
-                    <td>Publisher B</td>
-                </tr>
+                <tbody id="message-table-body"></tbody>
             </table>
+        </section>
+
+        <!-- Sorting and Filtering Section -->
+        <section class="sorting-filtering">
+            <h2>Sorting and Filtering</h2>
+            <label for="filter-input">Filter Messages:</label>
+            <input type="text" id="filter-input" onkeyup="filterMessages()" placeholder="Type to filter messages">
+            <br>
+            <button onclick="sortMessages(0, 'asc')">Sort by Timestamp (Asc)</button>
+            <button onclick="sortMessages(0, 'desc')">Sort by Timestamp (Desc)</button>
         </section>
 
         <!-- Database Interaction Section -->
         <section class="database-viewer">
             <h2>Database Viewer</h2>
-            <button>Export as JSON</button>
-            <button>Export as CSV</button>
+            <button onclick="exportData('json')">Export as JSON</button>
+            <button onclick="exportData('csv')">Export as CSV</button>
             <table>
                 <tr>
                     <th>ID</th>
@@ -171,6 +182,100 @@
     &copy; 2024 Cloud Messaging Provider. All rights reserved.
 </footer>
 
+<script>
+    function toggleDarkMode() {
+        const darkModeEnabled = document.body.classList.toggle('dark-mode');
+        document.getElementById('sidebar').classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+    }
+
+    // Load dark mode preference on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionTimestamp();
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('sidebar').classList.add('dark-mode');
+        }
+        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        fetchMessages();
+    });
+
+    function deleteMessage(messageId) {
+        fetch('/delete_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `MessageID=${messageId}`
+        }).then(response => response.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  alert('Message deleted successfully');
+                  fetchMessages();
+              } else {
+                  alert('Error: ' + data.message);
+              }
+          });
+    }
+
+    function exportData(format) {
+        window.location.href = `/export_messages?format=${format}`;
+    }
+
+    function updateConnectionTimestamp() {
+        const timestamp = new Date().toLocaleString();
+        document.getElementById('connection-timestamp').textContent = ` (Last updated: ${timestamp})`;
+    }
+
+    function fetchMessages() {
+        fetch('/get_messages')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched messages:', data); // Debugging log to see the response
+                if (data.status === 'success') {
+                    const messageTableBody = document.getElementById('message-table-body');
+                    messageTableBody.innerHTML = '';
+                    if (data.messages.length === 0) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = `<td colspan="8">No messages found.</td>`;
+                        messageTableBody.appendChild(emptyRow);
+                    } else {
+                        data.messages.forEach(message => {
+                            console.log('Processing message:', message); // Debugging log for each message
+                            const row = document.createElement('tr');
+                            row.className = message.Status && message.Status.toLowerCase() === 'duplicate' ? 'duplicate' : 'unique';
+                            row.innerHTML = `
+                                <td>${message.Timestamp || ''}</td>
+                                <td>${message.MessageID || ''}</td>
+                                <td>${message.ItemID || ''}</td>
+                                <td>${message.Location || ''}</td>
+                                <td>${message.Quantity !== undefined ? message.Quantity : ''}</td>
+                                <td>${message.Status || ''}</td>
+                                <td>${message.Source || ''}</td>
+                                <td><button onclick="deleteMessage('${message.MessageID}')">Delete</button></td>
+                            `;
+                            messageTableBody.appendChild(row);
+                        });
+                    }
+                } else {
+                    console.error('Error fetching messages:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching messages:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionTimestamp();
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('sidebar').classList.add('dark-mode');
+        }
+        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        fetchMessages();
+    });
+</script>
+
 </body>
 </html>
-
