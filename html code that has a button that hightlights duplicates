@@ -1,0 +1,320 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Messaging Provider Dashboard</title>
+    <style>
+        /* Basic CSS styling for layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header, footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #444;
+            color: white;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .sidebar a {
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .table, .settings-panel, .status-indicator {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .status-indicator.connected {
+            color: green;
+        }
+        .status-indicator.disconnected {
+            color: red;
+        }
+        .status-indicator.reconnecting {
+            color: orange;
+        }
+        .duplicate {
+            background-color: #ffcccc;
+        }
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #222;
+            color: white;
+        }
+        .sidebar.dark-mode {
+            background-color: #333;
+        }
+        .sidebar.dark-mode a {
+            color: white;
+        }
+        .sidebar.dark-mode a:hover {
+            background-color: #555;
+        }
+        .highlight {
+      background-color: yellow; /* Light grey background */
+      font-weight: bold; /* Optionally make the text bold */
+    }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Cloud Messaging Provider</h1>
+</header>
+
+<div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <a href="/">Home</a>
+        <a href="/get_messages">Messages</a>
+        <a href="/export_messages">Export Messages</a>
+        <a href="#" id="dark-mode-toggle">Toggle Dark Mode</a>
+        <a href="/settings">Settings</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Connectivity Status -->
+        <div id="connectivity-status" class="status-indicator connected">
+            <strong>Connectivity Status:</strong> Connected
+            <span id="connection-timestamp"></span>
+        </div>
+
+        <!-- Message Management Panel -->
+        <section class="message-management">
+            <h2>Message Table</h2>
+            <button onclick = highlightDuplicates()> Press to Highlight Duplicates</button>
+            <table id="myTable">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Message ID</th>
+                    <th>Item ID</th>
+                    <th>Location</th>
+                    <th>Quantity</th>
+                </tr>
+                <tr>
+                    <th>d72313ef-e953-4aa7-a8cc-33489fdcd22c</th>
+                    <th>008763419206</th>
+                    <th>008763419206</th>
+                    <th>001</th>
+                    <th>1273</th>
+                </tr>
+                <tr>
+                    <th>d72313ef-e953-4aa7-a8cc-33489fdcd22c</th>
+                    <th>008763419206</th>
+                    <th>008763419206</th>
+                    <th>001</th>
+                    <th>1273</th>
+                </tr>
+                <tbody id="message-table-body"></tbody>
+            </table>
+        </section>
+
+        <!-- Sorting and Filtering Section -->
+        <section class="sorting-filtering">
+            <h2>Sorting and Filtering</h2>
+            <label for="filter-input">Filter Messages:</label>
+            <input type="text" id="filter-input" onkeyup="filterMessages()" placeholder="Type to filter messages">
+            <br>
+            <button onclick="sortMessages(0, 'asc')">Sort by Timestamp (Asc)</button>
+            <button onclick="sortMessages(0, 'desc')">Sort by Timestamp (Desc)</button>
+        </section>
+
+        <!-- Database Interaction Section -->
+        <section class="database-viewer">
+            <h2>Database Viewer</h2>
+            <button onclick="exportData('json')">Export as JSON</button>
+            <button onclick="exportData('csv')">Export as CSV</button>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Sample data</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- User Settings -->
+        <section class="settings-panel">
+            <h2>User Settings</h2>
+            <div>
+                <strong>Profile Management</strong>
+                <p><a href="#">Change Password</a></p>
+                <p><a href="#">Dark Mode</a></p>
+                <p><a href="#">Notification Settings</a></p>
+            </div>
+            <div>
+                <strong>API Configuration</strong>
+                <form>
+                    <label for="api-endpoint">API Endpoint:</label>
+                    <input type="text" id="api-endpoint" name="api-endpoint">
+                    <label for="api-key">API Key:</label>
+                    <input type="text" id="api-key" name="api-key">
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<footer>
+    &copy; 2024 Cloud Messaging Provider. All rights reserved.
+</footer>
+
+<script>
+    function toggleDarkMode() {
+        const darkModeEnabled = document.body.classList.toggle('dark-mode');
+        document.getElementById('sidebar').classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+    }
+
+    // Load dark mode preference on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionTimestamp();
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('sidebar').classList.add('dark-mode');
+        }
+        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        fetchMessages();
+    });
+
+    function deleteMessage(messageId) {
+        fetch('/delete_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `MessageID=${messageId}`
+        }).then(response => response.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  alert('Message deleted successfully');
+                  fetchMessages();
+              } else {
+                  alert('Error: ' + data.message);
+              }
+          });
+    }
+
+    function exportData(format) {
+        window.location.href = `/export_messages?format=${format}`;
+    }
+
+    function updateConnectionTimestamp() {
+        const timestamp = new Date().toLocaleString();
+        document.getElementById('connection-timestamp').textContent = ` (Last updated: ${timestamp})`;
+    }
+
+    function fetchMessages() {
+        fetch('/get_messages')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched messages:', data); // Debugging log to see the response
+                if (data.status === 'success') {
+                    const messageTableBody = document.getElementById('message-table-body');
+                    messageTableBody.innerHTML = '';
+                    if (data.messages.length === 0) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = `<td colspan="8">No messages found.</td>`;
+                        messageTableBody.appendChild(emptyRow);
+                    } else {
+                        data.messages.forEach(message => {
+                            console.log('Processing message:', message); // Debugging log for each message
+                            const row = document.createElement('tr');
+                            row.className = message.Status && message.Status.toLowerCase() === 'duplicate' ? 'duplicate' : 'unique';
+                            row.innerHTML = `
+                                <td>${message.Timestamp || ''}</td>
+                                <td>${message.MessageID || ''}</td>
+                                <td>${message.ItemID || ''}</td>
+                                <td>${message.Location || ''}</td>
+                                <td>${message.Quantity !== undefined ? message.Quantity : ''}</td>
+                                <td>${message.Status || ''}</td>
+                                <td>${message.Source || ''}</td>
+                                <td><button onclick="deleteMessage('${message.MessageID}')">Delete</button></td>
+                            `;
+                            messageTableBody.appendChild(row);
+                        });
+                    }
+                } else {
+                    console.error('Error fetching messages:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching messages:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionTimestamp();
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('sidebar').classList.add('dark-mode');
+        }
+        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        fetchMessages();
+    });
+    function highlightDuplicates() {
+      const table = document.getElementById('myTable');
+      const rows = table.getElementsByTagName('tr');
+      const seenValues = {}; // Object to track seen values
+      const columnToCheck = 2; // Change this value if you want to check another column (e.g., 1 for Price, 2 for Quantity)
+
+      for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+        const cells = rows[i].getElementsByTagName('th');
+        if (cells.length > 0) {
+          const value = cells[columnToCheck].textContent.trim();
+          
+          if (seenValues[value]) {
+            // If value is already seen, highlight the duplicate
+            rows[i].classList.add('highlight');
+            const previousRow = seenValues[value].row;
+            previousRow.classList.add('highlight');
+          } else {
+            // Store the value with reference to the row
+            seenValues[value] = { row: rows[i] };
+          }
+        }
+      }
+    }
+</script>
+
+</body>
+</html>
