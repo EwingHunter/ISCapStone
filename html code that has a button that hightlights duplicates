@@ -292,7 +292,7 @@
         fetchMessages();
     });
     function highlightDuplicates() {
-      const table = document.getElementById('myTable');
+      const table = document.getElementById('message-table-body');
       const rows = table.getElementsByTagName('tr');
       const seenValues = {}; // Object to track seen values
       const columnToCheck = 2; // Change this value if you want to check another column (e.g., 1 for Price, 2 for Quantity)
