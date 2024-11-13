@@ -126,20 +126,6 @@
                     <th>Location</th>
                     <th>Quantity</th>
                 </tr>
-                <tr>
-                    <th>d72313ef-e953-4aa7-a8cc-33489fdcd22c</th>
-                    <th>008763419206</th>
-                    <th>008763419206</th>
-                    <th>001</th>
-                    <th>1273</th>
-                </tr>
-                <tr>
-                    <th>d72313ef-e953-4aa7-a8cc-33489fdcd22c</th>
-                    <th>008763419206</th>
-                    <th>008763419206</th>
-                    <th>001</th>
-                    <th>1273</th>
-                </tr>
                 <tbody id="message-table-body"></tbody>
             </table>
         </section>
