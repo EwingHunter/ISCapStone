@@ -25,7 +25,6 @@ collection = db['messages']
 # Flask App Initialization
 app = Flask(__name__)
 
-# Route: Home Page
 @app.route('/')
 def home():
     try:
@@ -39,6 +38,8 @@ def home():
             "Quantity": 1,
             "Status": 1,
         }))
+
+        print("Fetched Messages:", messages)  # Debugging print statement
 
         # Check for duplicates and add `is_duplicate` flag
         transaction_numbers = [
@@ -54,6 +55,9 @@ def home():
     except Exception as e:
         print("Error fetching messages:", e)
         return "Error fetching messages.", 500
+
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
